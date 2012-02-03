@@ -159,8 +159,7 @@ def _byRelatedFieldFactory(parent):
 		Ajax filtered field that displays filters based on a related field 
 		(foreign key or many to many) of the object.
 		"""
-		def __init__(self, model, field_name, include_blank=False, 
-			*args, **kwargs):
+		def __init__(self, model, field_name, include_blank=False, filter_not_used=False, *args, **kwargs):
 			"""
 			model: the related model
 			field_name: the name of the field representing the relationship
@@ -180,7 +179,11 @@ def _byRelatedFieldFactory(parent):
 				Return the lookups dict. This is needed because the lookups
 				may change as consequence of database changes at runtime.
 				"""
+				
 				choices = field.get_choices(include_blank=include_blank)
+				if filter_not_used:
+					filtered_pk_set = set(model.objects.exclude(**{field_name: None}).values_list(field_name, flat=True))
+					choices = [choice for choice in choices if choice[0] in filtered_pk_set]
 				lookups_ = [(label, {attname: pk}) for pk, label in choices if pk]
 				# add the blank choice lookup
 				if include_blank:
