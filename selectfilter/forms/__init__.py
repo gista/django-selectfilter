@@ -1,2 +1,2 @@
-from widgets import FilteredSelectMultiple
+from widgets import FilteredSelectMultiple, SelectBoxFilter, HyperLinksFilter
 from fields import AjaxManyToManyField, ManyToManyByLetter, ManyToManyByStatus, ManyToManyByRelatedField

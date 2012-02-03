@@ -8,39 +8,70 @@ from django.utils.translation import ugettext as _
 
 from selectfilter import utils
 
+class SelectBoxFilter(object):
 
-def _renderFilter(js_method_name, element_id, model, lookup_list, 
-	select_related):
-	"""Return the html output of a filter link."""
-	label, lookup_dict = lookup_list
-	script = "selectfilter.%s('%s', '%s', '%s', '%s', '%s')" % (
-		js_method_name,
-		element_id,
-		model._meta.app_label, 
-		model._meta.object_name, 
-		utils.lookupToString(lookup_dict),
-		select_related)
-	return '<option value="%s">%s</option> '% (script, label)
+	def renderFilter(self, js_method_name, element_id, model, lookups, select_related):
+		if len(lookups) <= 1:
+			return ""
+		def renderElement(lookup):
+			label, lookup_dict = lookup
+			script = "selectfilter.%s('%s', '%s', '%s', '%s', '%s')" % (
+				js_method_name,
+				element_id,
+				model._meta.app_label,
+				model._meta.object_name,
+				utils.lookupToString(lookup_dict),
+				select_related)
+			return '<option value="%s">%s</option> '% (script, label)
+		return '<select onChange="eval(this.value)">%s</select>' % "\n".join(renderElement(lookup) for lookup in lookups)
+
+	def render(self, lookups_output, parent_output):
+		return u"""
+			<div class="field-box">
+			%s
+			<p></p>
+			%s
+			</div>""" % (lookups_output, parent_output)
+
+class HyperLinksFilter(object):
+
+	def renderFilter(self, js_method_name, element_id, model, lookups, select_related):
+		if len(lookups) <= 1:
+			return ""
+		def renderElement(lookup):
+			label, lookup_dict = lookup
+			script = "selectfilter.%s('%s', '%s', '%s', '%s', '%s')" % (
+				js_method_name,
+				element_id,
+				model._meta.app_label,
+				model._meta.object_name,
+				utils.lookupToString(lookup_dict),
+				select_related)
+			return '<a class="ajax_filter_choice" href="javascript:void(0)"onclick="%s">%s</a>'% (script, label)
+		return "\n".join(renderElement(lookup) for lookup in lookups)
+
+	def render(self, lookups_output, parent_output):
+		return u"""
+			<div>
+				%s
+			</div>
+			%s
+			""" % (lookups_output, parent_output)
+
 
 class FilteredSelectMultiple(forms.SelectMultiple):
-			
+
 	def render(self, name, value, attrs=None, choices=()):
 		self._element_id = attrs['id']
 		# choices links
 		# if there is only one choice, then nothing will be rendered
-		lookups_output = ""
+		filter_widget = self.filter_widget()
 		lookups = utils.getLookups(self.lookups)
-		if len(lookups) > 1:
-			js_method_name = "getManyToManyJSON"
-			lookups_output = "\n".join(
-				_renderFilter(js_method_name, self._element_id, 
-					self.model, i, self.select_related) 
-				for i in lookups)
-			lookups_output = '<select onChange="eval(this.value)">%s</select>' % lookups_output
+		lookups_output = filter_widget.renderFilter("getManyToManyJSON", self._element_id, self.model, lookups, self.select_related)
+		
 		# normal widget output from the anchestor
-		self.choices = self._getAllChoices(value)				
-		parent_output = super(FilteredSelectMultiple, self
-			).render(name, value, attrs, choices)
+		self.choices = self._getAllChoices(value)
+		parent_output = super(FilteredSelectMultiple, self).render(name, value, attrs, choices)
 		
 		# create the output including the django admin's Javascript code that
 		# mutates the select widget into a selectfilter one
@@ -49,9 +80,6 @@ class FilteredSelectMultiple(forms.SelectMultiple):
 		verbose_name = self.model._meta.verbose_name_plural.replace('"', '\\"')
 		
 		output = u"""
-			<div>
-				%s
-			</div>
 			%s
 			<script type="text/javascript">
 				(function($) {
@@ -60,7 +88,7 @@ class FilteredSelectMultiple(forms.SelectMultiple):
 					});
 				})(django.jQuery);
 			</script>
-		""" % (lookups_output, parent_output, name, 
+		""" % (filter_widget.render(lookups_output, parent_output), name, 
 			verbose_name, settings.ADMIN_MEDIA_PREFIX)
 		
 		return mark_safe(output)

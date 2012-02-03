@@ -3,7 +3,7 @@ from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _
 
-from selectfilter.forms import FilteredSelectMultiple
+from selectfilter.forms import FilteredSelectMultiple, SelectBoxFilter, HyperLinksFilter
 from selectfilter import utils
 
 class AjaxManyToManyField(forms.ModelMultipleChoiceField):
@@ -12,7 +12,7 @@ class AjaxManyToManyField(forms.ModelMultipleChoiceField):
 	JQuery ajax requests.
 	"""
 	def __init__(self, model, lookups, default_index=0, select_related=None,
-		widget=FilteredSelectMultiple, *args, **kwargs):
+		widget=FilteredSelectMultiple, filter_widget=SelectBoxFilter, *args, **kwargs):
 		"""
 		model: the related model
 		lookups: a sequence of (label, lookup_dict) that tells how to
@@ -60,6 +60,7 @@ class AjaxManyToManyField(forms.ModelMultipleChoiceField):
 		self.widget.lookups = self.lookups = lookups
 		self.widget.model = self.model = model
 		self.widget.select_related = select_related
+		self.widget.filter_widget = filter_widget
 		
 	def clean(self, value):
 		if self.required and not value:
