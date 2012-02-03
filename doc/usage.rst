@@ -11,7 +11,7 @@ Ajax Filtered Fields
 Introduction
 ============
 
-Theese fields may be used in a **many to many** or **foreign key** relation, 
+Theese fields may be used in a **many to many** relation, 
 where the user may want to apply filters to the listed objects, 
 because of they being too many, or just for usability reasons.
 
@@ -88,12 +88,10 @@ with the *RelatedModel* one, via the ``related_models`` field.
    and then referencing the new url in place of 
    ``admin/jsi18n/`` in the page where you need an ajax filtered field.
     
-6. if you want **i18n** for *ManyToManyByLetter*, *ForeignKeyByLetter*,
-   *ManyToManyByStatus*, *ForeignKeyByStatus*, *ManyToManyByRelatedField* and
-   *ForeignKeyByRelatedField* fields 
-   (see below for details about available fields), add ``'selectfilter'``
-   to the ``INSTALLED_APPS`` in your *settings.py*. The only languages currently
-   available are English and Italian.
+6. if you want **i18n** for *ManyToManyByLetter*, *ManyToManyByStatus* and
+   *ManyToManyByRelatedField* fields (see below for details about available fields),
+   add ``'selectfilter'`` to the ``INSTALLED_APPS`` in your *settings.py*.
+   The only languages currently available are English and Italian.
    
 
 Available fields
@@ -110,7 +108,7 @@ jQuery Ajax requests.
     from selectfilter.forms import AjaxManyToManyField
     # in the form
     related_objects = AjaxManyToManyField(
-        model, lookups, default_index=0, select_related=None, *args, **kwargs)
+        model, lookups, default_index=0, select_related=None, filter_widget=SelectBoxFilter, *args, **kwargs)
 
 **Arguments**:
 
@@ -150,6 +148,8 @@ jQuery Ajax requests.
   using ``select_related(select_related)``, allowing foreign keys
   to be retrieved (e.g. useful when the unicode representation 
   of the model objects contains references to foreign keys).
+
+- *filter_widget*: a widget class used for lookups choices (*HyperLinksFilter* or *SelectBoxFilter*)
 
 You may also pass all the other *args* and *kwargs* accepted by the Django
 *Field* class.
@@ -204,7 +204,7 @@ ManyToManyByRelatedField
 **New in version 0.5:**
 
 A subclass of *AjaxManyToManyField* that displays filters based on a related field 
-(foreign key or many to many) of the object.
+(many to many) of the object.
 
 **Usage**::
 
@@ -226,82 +226,11 @@ A subclass of *AjaxManyToManyField* that displays filters based on a related fie
 - *include_blank*: if not *False* is displayed a NULL choice for
   objects without relation (``field_name__isnull=True``).
   The label of the choice must be specified as string.
+- *filter_not_used*: if *True*, lookups choices will contains only records that are
+  assigned in at least one of model's records.
 
 You may also pass all the other *args* and *kwargs* accepted by
 *AjaxManyToManyField*.  
-
-AjaxForeignKeyField
-~~~~~~~~~~~~~~~~~~~
-
-Base foreign key form field class that displays filter choices using 
-jQuery Ajax requests.
-
-**Usage**::
-
-    from selectfilter.forms import AjaxForeignKeyField
-    # in the form
-    related_objects = AjaxForeignKeyField(
-        model, lookups, default_index=0, select_related=None, *args, **kwargs)
-        
-It takes the same arguments as *AjaxManyToManyField*, 
-refer to *AjaxManyToManyField* documentation for details.
-
-ForeignKeyByLetter
-~~~~~~~~~~~~~~~~~~
-
-A subclass of *AjaxForeignKeyField* that displays filters based on initials of
-a field of the objects, as they are typed by the user.
-
-.. image:: fk_letter.png
-
-**Usage**::
-
-    from selectfilter.forms import ForeignKeyByLetter
-    # in the form
-    related_objects = ForeignKeyByLetter(model, field_name="name")
-
-It takes the same arguments as *ManyToManyByLetter*, 
-refer to *ManyToManyByLetter* documentation for details.
-You may also pass all the other *args* and *kwargs* accepted by
-*AjaxForeignKeyField*.
-
-ForeignKeyByStatus
-~~~~~~~~~~~~~~~~~~
-
-A subclass of *AjaxForeignKeyField* that displays filters based on the activation
-status of the objects.
-
-.. image:: fk_status.png
-
-**Usage**::
-
-    from selectfilter.forms import ForeignKeyByStatus
-    # in the form
-    related_objects = ForeignKeyByStatus(model, field_name="is_active")
-    
-It takes the same arguments as *ManyToManyByStatus*, 
-refer to *ManyToManyByStatus* documentation for details.
-You may also pass all the other *args* and *kwargs* accepted by
-*AjaxForeignKeyField*.
-
-ForeignKeyByRelatedField
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-**New in version 0.5:**
-
-A subclass of *AjaxForeignKeyField* that displays filters based on a related field 
-(foreign key or many to many) of the object.
-
-**Usage**::
-
-    from selectfilter.forms import ForeignKeyByRelatedField
-    # in the form
-    related_objects = ForeignKeyByRelatedField(model, field_name, include_blank=False)
-    
-It takes the same arguments as *ManyToManyByRelatedField*, 
-refer to *ManyToManyByRelatedField* documentation for details.
-You may also pass all the other *args* and *kwargs* accepted by
-*AjaxForeignKeyField*.
 
 
 Settings
