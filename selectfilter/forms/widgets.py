@@ -25,7 +25,8 @@ class SelectBoxFilter(object):
 			return '<option value="%s">%s</option> '% (script, label)
 		return '<select onChange="eval(this.value)">%s</select>' % "\n".join(renderElement(lookup) for lookup in lookups)
 
-	def render(self, lookups_output, parent_output):
+	def composeField(self, lookups_output, parent_output):
+		"""Composes HTML code for entire field from both filter and selection widget's HTML elements."""
 		return u"""
 			<div class="field-box">
 			%s
@@ -50,7 +51,8 @@ class HyperLinksFilter(object):
 			return '<a class="ajax_filter_choice" href="javascript:void(0)"onclick="%s">%s</a>'% (script, label)
 		return "\n".join(renderElement(lookup) for lookup in lookups)
 
-	def render(self, lookups_output, parent_output):
+	def composeField(self, lookups_output, parent_output):
+		"""Composes HTML code for entire field from both filter and selection widget's HTML elements."""
 		return u"""
 			<div>
 				%s
@@ -88,7 +90,7 @@ class FilteredSelectMultiple(forms.SelectMultiple):
 					});
 				})(django.jQuery);
 			</script>
-		""" % (filter_widget.render(lookups_output, parent_output), name, 
+		""" % (filter_widget.composeField(lookups_output, parent_output), name, 
 			verbose_name, settings.ADMIN_MEDIA_PREFIX)
 		
 		return mark_safe(output)
