@@ -10,10 +10,10 @@ from selectfilter import utils
 
 class SelectBoxFilter(object):
 
-	def renderFilter(self, js_method_name, element_id, model, lookups, select_related):
+	def renderFilter(self, js_method_name, element_id, model, lookups, select_related, default_index=0):
 		if len(lookups) <= 1:
 			return ""
-		def renderElement(lookup):
+		def renderElement(index, lookup):
 			label, lookup_dict = lookup
 			script = "selectfilter.%s('%s', '%s', '%s', '%s', '%s')" % (
 				js_method_name,
@@ -22,8 +22,10 @@ class SelectBoxFilter(object):
 				model._meta.object_name,
 				utils.lookupToString(lookup_dict),
 				select_related)
+			if index == default_index:
+				return '<option selected="selected" value="%s">%s</option> '% (script, label)
 			return '<option value="%s">%s</option> '% (script, label)
-		return '<select onChange="eval(this.value)">%s</select>' % "\n".join(renderElement(lookup) for lookup in lookups)
+		return '<select onChange="eval(this.value)">%s</select>' % "\n".join(renderElement(index, lookup) for index, lookup in enumerate(lookups))
 
 	def composeField(self, lookups_output, parent_output):
 		"""Composes HTML code for entire field from both filter and selection widget's HTML elements."""
@@ -36,7 +38,7 @@ class SelectBoxFilter(object):
 
 class HyperLinksFilter(object):
 
-	def renderFilter(self, js_method_name, element_id, model, lookups, select_related):
+	def renderFilter(self, js_method_name, element_id, model, lookups, select_related, *args, **kwargs):
 		if len(lookups) <= 1:
 			return ""
 		def renderElement(lookup):
@@ -67,9 +69,8 @@ class FilteredSelectMultiple(forms.SelectMultiple):
 		self._element_id = attrs['id']
 		# choices links
 		# if there is only one choice, then nothing will be rendered
-		filter_widget = self.filter_widget()
 		lookups = utils.getLookups(self.lookups)
-		lookups_output = filter_widget.renderFilter("getManyToManyJSON", self._element_id, self.model, lookups, self.select_related)
+		lookups_output = self.filter_widget.renderFilter("getManyToManyJSON", self._element_id, self.model, lookups, self.select_related, self.default_index)
 		
 		# normal widget output from the anchestor
 		self.choices = self._getAllChoices(value)
@@ -90,7 +91,7 @@ class FilteredSelectMultiple(forms.SelectMultiple):
 					});
 				})(django.jQuery);
 			</script>
-		""" % (filter_widget.composeField(lookups_output, parent_output), name, 
+		""" % (self.filter_widget.composeField(lookups_output, parent_output), name, 
 			verbose_name, settings.ADMIN_MEDIA_PREFIX)
 		
 		return mark_safe(output)

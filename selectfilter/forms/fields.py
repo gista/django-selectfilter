@@ -60,7 +60,8 @@ class AjaxManyToManyField(forms.ModelMultipleChoiceField):
 		self.widget.lookups = self.lookups = lookups
 		self.widget.model = self.model = model
 		self.widget.select_related = select_related
-		self.widget.filter_widget = filter_widget
+		self.widget.filter_widget = filter_widget()
+		self.widget.default_index = default_index
 		
 	def clean(self, value):
 		if self.required and not value:
@@ -190,7 +191,7 @@ def _byRelatedFieldFactory(parent):
 					attname_isnull = "%s__isnull" % field_name
 					lookups_.append((include_blank, {attname_isnull: True}))
 				# add the all objects lookup
-				lookups_.append((_('all'), {}))
+				lookups_.insert(0, (_('-'), {}))
 				return lookups_
 
 			super(ByRelatedField, self).__init__(model, lookups, *args, **kwargs)
