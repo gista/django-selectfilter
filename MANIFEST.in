@@ -3,5 +3,4 @@ include INSTALL
 include LICENSE
 include MANIFEST.in
 recursive-include doc *
-recursive-include media *
-recursive-include ajax_filtered_fields/locale *
+recursive-include selectfilter/locale *

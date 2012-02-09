@@ -1,8 +1,10 @@
 ====================
-Ajax Filtered Fields
+Django Selectfilter
 ====================
 
 :Author: Francesco Banconi <francesco.banconi@gmail.com>
+:Author: Marcel Dancak <marcel.dancak@gista.sk>
+:Author: Ivan Mincik <ivan.mincik@gista.sk>
 
 .. contents:: Index
 
