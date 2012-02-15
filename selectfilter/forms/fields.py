@@ -50,6 +50,8 @@ class AjaxManyToManyField(forms.ModelMultipleChoiceField):
 			queryset = model.objects.none()
 		else:
 			lookups_list = utils.getLookups(lookups)
+			if default_index >= len(lookups_list):
+				default_index = 0
 			lookup_dict = lookups_list[default_index][1]
 			# get the queryset
 			queryset = utils.getObjects(model, lookup_dict, select_related)
