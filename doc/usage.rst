@@ -62,8 +62,7 @@ with the *RelatedModel* one, via the ``related_models`` field.
                 js = (
                     settings.ADMIN_MEDIA_PREFIX + "js/SelectBox.js",
                     settings.ADMIN_MEDIA_PREFIX + "js/SelectFilter2.js",
-                    '/path/to/javascripts/jquery.js',
-                    '/path/to/javascripts/selectfilter.js',
+                    settings.ADMIN_MEDIA_PREFIX + "js/selectfilter.js"
                 )
                 
 4. if the form is being used outside of the auto generated django admin, you
@@ -93,7 +92,7 @@ with the *RelatedModel* one, via the ``related_models`` field.
 6. if you want **i18n** for *ManyToManyByLetter*, *ManyToManyByStatus* and
    *ManyToManyByRelatedField* fields (see below for details about available fields),
    add ``'selectfilter'`` to the ``INSTALLED_APPS`` in your *settings.py*.
-   The only languages currently available are English and Italian.
+   The only languages currently available are English and Slovak.
    
 
 Available fields
@@ -228,17 +227,17 @@ A subclass of *AjaxManyToManyField* that displays filters based on a related fie
 - *include_blank*: if not *False* is displayed a NULL choice for
   objects without relation (``field_name__isnull=True``).
   The label of the choice must be specified as string.
-- *filter_not_used*: if *True*, lookups choices will contains only records that are
-  assigned in at least one of model's records.
+- *filter_not_used*: if *True*, lookups choices will contains only records from related
+  field models which are assigned in at least one of model's records.
 
 You may also pass all the other *args* and *kwargs* accepted by
-*AjaxManyToManyField*.  
+*AjaxManyToManyField*.
 
 
 Settings
 ========
 
-Set ``selectfilter_AUTH_DECORATOR = None`` in your project settings
+Set ``AJAX_FILTERED_FIELDS_AUTH_DECORATOR = None`` in your project settings
 if you want to allow public access to the *views.json_index* view. Otherwise
 set it as an auth decorator callable
 (eg: *django.contrib.auth.decorators.login_required*). **Default** is
@@ -253,6 +252,8 @@ Ajax Filtered Field refers to) when the ajax request is completed, the json data
 is loaded and the options are fully displayed.
 If you need, you can bind the event easily using *jQuery*, e.g.::
 
-    $("#select_id").bind(selectfilter.data_loaded, function(e) {
-        // do the voodoo
-    });
+    (function($) {
+        $("#select_id").bind(selectfilter.data_loaded, function(e) {
+            // do the voodoo
+        });
+    })(django.jQuery);
