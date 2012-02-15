@@ -1,0 +1,35 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Marcel Dancak <marcel.dancak@gista.sk>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-02-15 11:33+0100\n"
+"PO-Revision-Date: 2012-02-15 11:33+0100\n"
+"Last-Translator: Marcel Dancak <marcel.dancak@gista.sk>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+
+#: forms/fields.py:113
+msgid "other"
+msgstr "iné"
+
+#: forms/fields.py:142
+msgid "active"
+msgstr "aktívne"
+
+#: forms/fields.py:143
+msgid "inactive"
+msgstr "neaktívne"
+
+#: forms/fields.py:144
+msgid "all"
+msgstr "všetky"
+

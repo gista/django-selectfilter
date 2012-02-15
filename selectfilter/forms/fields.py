@@ -191,7 +191,7 @@ def _byRelatedFieldFactory(parent):
 					attname_isnull = "%s__isnull" % field_name
 					lookups_.append((include_blank, {attname_isnull: True}))
 				# add the all objects lookup
-				lookups_.insert(0, (_('-'), {}))
+				lookups_.insert(0, ('-', {}))
 				return lookups_
 
 			super(ByRelatedField, self).__init__(model, lookups, *args, **kwargs)
