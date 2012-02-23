@@ -14,21 +14,20 @@ for dirpath, dirnames, filenames in os.walk('selectfilter'):
     elif filenames:
         for f in filenames:
             data_files.append(os.path.join(dirpath[21:], f))
-        
+
 version = "%s.%s" % __import__('selectfilter').VERSION[:2]
 
 setup(name='django-selectfilter',
       version=version,
-      description='Django fields for many to many and foreign key ajax filtered relations',
-      author='Francesco Banconi',
-      author_email='francesco.banconi@gmail.com',
-      url='http://code.google.com/p/django-ajax-filtered-fields/',
+      description='improved Django many to many widgets',
+      author='Francesco Banconi, Marcel Dancak, Ivan Mincik',
+      url='https://github.com/gista/django-selectfilter',
       package_dir={'selectfilter': 'selectfilter'},
       packages=['selectfilter', 'selectfilter.forms'],
       package_data={'selectfilter': data_files},
-      classifiers=['Development Status :: 5 - Production/Stable',
-                   'Environment :: Web Environment',
+      classifiers=['Development Status :: 4 - Beta',
                    'Framework :: Django',
+                   'Environment :: Web Environment',
                    'Intended Audience :: Developers',
                    'License :: OSI Approved :: MIT License',
                    'Operating System :: OS Independent',
