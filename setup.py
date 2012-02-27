@@ -1,36 +1,56 @@
-from distutils.core import setup
 import os
+from posixpath import curdir, sep, pardir, join, abspath, commonprefix
+from distutils.core import setup
 
-root_dir = os.path.dirname(__file__)
-if root_dir:
-    os.chdir(root_dir)
+# classifiers
+classifiers = [
+	'Development Status :: 4 - Beta',
+	'Framework :: Django',
+	'Environment :: Web Environment',
+	'Intended Audience :: Developers',
+	'License :: OSI Approved :: MIT License',
+	'Operating System :: OS Independent',
+	'Programming Language :: Python',
+	'Topic :: Utilities',
+]
 
-data_files = []
-for dirpath, dirnames, filenames in os.walk('selectfilter'):
-    for i, dirname in enumerate(dirnames):
-        if dirname.startswith('.'): del dirnames[i]
-    if '__init__.py' in filenames:
-        continue
-    elif filenames:
-        for f in filenames:
-            data_files.append(os.path.join(dirpath[21:], f))
+# package_data files
+package = 'selectfilter'
+package_data_dirs = ('selectfilter/locale', 'selectfilter/static')
+package_data_files = []
 
-version = "%s.%s" % __import__('selectfilter').VERSION[:2]
+def relpath(path, start=curdir):
+	"""Return a relative version of a path (missing in Python <=2.5)."""
+	if not path:
+		raise ValueError("no path specified")
+	start_list = abspath(start).split(sep)
+	path_list = abspath(path).split(sep)
+	i = len(commonprefix([start_list, path_list]))
+	rel_list = [pardir] * (len(start_list)-i) + path_list[i:]
+	if not rel_list:
+		return curdir
+	return join(*rel_list)
 
+for data_dir in package_data_dirs:
+	filelist = []
+	for dirpath, dirnames, filenames in os.walk(data_dir):
+		for filename in filenames:
+			if os.path.isfile(os.path.join(dirpath, filename)):
+				filelist.append(relpath(os.path.join(dirpath, filename), package))
+	package_data_files.extend(filelist)
+
+# version
+version = "%s.%s.%s" % __import__('selectfilter').VERSION[:3]
+print version
+
+# setup
 setup(name='django-selectfilter',
       version=version,
       description='improved Django many to many widgets',
       author='Francesco Banconi, Marcel Dancak, Ivan Mincik',
       url='https://github.com/gista/django-selectfilter',
-      package_dir={'selectfilter': 'selectfilter'},
+      package_dir={'django-selectfilter': '.'},
       packages=['selectfilter', 'selectfilter.forms'],
-      package_data={'selectfilter': data_files},
-      classifiers=['Development Status :: 4 - Beta',
-                   'Framework :: Django',
-                   'Environment :: Web Environment',
-                   'Intended Audience :: Developers',
-                   'License :: OSI Approved :: MIT License',
-                   'Operating System :: OS Independent',
-                   'Programming Language :: Python',
-                   'Topic :: Utilities'],
+      package_data={'selectfilter': package_data_files},
+      classifiers=classifiers,
       )
