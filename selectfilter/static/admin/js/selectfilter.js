@@ -29,7 +29,8 @@
 			selector_to.attr("disabled", true);
 
 			this._removeOptions(selector_from);
-		
+			var chosen_field_name = element_id+"_to";
+
 			$.getJSON(this.request_url, {
 				app_label: app_label, 
 				object_name: object_name, 
@@ -38,7 +39,7 @@
 				function(data){
 					selectfilter._removeOptions(selector_from);
 					$.each(data, function(i, obj){
-						var option_is_selected = selector_to.children("option[value='" + obj[0] + "']").length;
+						var option_is_selected = SelectBox.cache_contains(chosen_field_name, obj[0]);
 						if (!option_is_selected) {
 							selectfilter._appendOption(obj, selector_from);
 						};
