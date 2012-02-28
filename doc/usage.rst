@@ -146,8 +146,9 @@ jQuery Ajax requests.
   widget to start empty;
   
 - *select_related*: if not *None*, the resulting querydict is performed
-  using ``select_related(select_related)``, allowing foreign keys
-  to be retrieved (e.g. useful when the unicode representation 
+  using ``select_related(select_related)`` or ``select_related("field1", "field2", "field3")`` (when
+  contains multiple fields names separated by comma, like "field1,field2,field3"), allowing
+  foreign keys to be retrieved (e.g. useful when the unicode representation 
   of the model objects contains references to foreign keys).
 
 - *filter_widget*: a widget class used for lookups choices (*HyperLinksFilter* or *SelectBoxFilter*)
