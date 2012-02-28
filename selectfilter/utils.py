@@ -42,7 +42,7 @@ def getLookups(lookups):
 
 def _getManager(model, select_related):
 	if select_related is not None:
-		return model.objects.select_related(select_related)
+		return model.objects.select_related(*select_related.split(","))
 	return model.objects
 	
 def getObjects(model, lookup_dict, select_related):
