@@ -41,7 +41,6 @@ for data_dir in package_data_dirs:
 
 # version
 version = "%s.%s.%s" % __import__('selectfilter').VERSION[:3]
-print version
 
 # setup
 setup(name='django-selectfilter',
