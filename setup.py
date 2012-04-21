@@ -1,5 +1,4 @@
 import os
-from posixpath import curdir, sep, pardir, join, abspath, commonprefix
 from distutils.core import setup
 
 # classifiers
@@ -14,42 +13,37 @@ classifiers = [
 	'Topic :: Utilities',
 ]
 
-# package_data files
-package = 'selectfilter'
-package_data_dirs = ('selectfilter/locale', 'selectfilter/static')
-package_data_files = []
+# Compile the list of packages available, because distutils doesn't have
+# an easy way to do this.
+package_root_dir = 'selectfilter'
+packages, data_files = [], []
+root_dir = os.path.dirname(__file__)
+if root_dir:
+	os.chdir(root_dir)
 
-def relpath(path, start=curdir):
-	"""Return a relative version of a path (missing in Python <=2.5)."""
-	if not path:
-		raise ValueError("no path specified")
-	start_list = abspath(start).split(sep)
-	path_list = abspath(path).split(sep)
-	i = len(commonprefix([start_list, path_list]))
-	rel_list = [pardir] * (len(start_list)-i) + path_list[i:]
-	if not rel_list:
-		return curdir
-	return join(*rel_list)
-
-for data_dir in package_data_dirs:
-	filelist = []
-	for dirpath, dirnames, filenames in os.walk(data_dir):
-		for filename in filenames:
-			if os.path.isfile(os.path.join(dirpath, filename)):
-				filelist.append(relpath(os.path.join(dirpath, filename), package))
-	package_data_files.extend(filelist)
-
-# version
-version = "%s.%s.%s" % __import__('selectfilter').VERSION[:3]
+for dirpath, dirnames, filenames in os.walk(package_root_dir):
+	# Ignore dirnames that start with '.'
+	for i, dirname in enumerate(dirnames):
+		if dirname.startswith('.'): del dirnames[i]
+	if '__init__.py' in filenames:
+		pkg = dirpath.replace(os.path.sep, '.')
+		if os.path.altsep:
+			pkg = pkg.replace(os.path.altsep, '.')
+		packages.append(pkg)
+	elif filenames:
+		prefix = dirpath[len(package_root_dir)+1:] # Strip "package_root_dir/" from path
+		for f in filenames:
+			data_files.append(os.path.join(prefix, f))
 
 # setup
 setup(name='django-selectfilter',
-      version=version,
-      description='improved Django many to many widgets',
-      author='Francesco Banconi, Marcel Dancak, Ivan Mincik',
-      url='https://github.com/gista/django-selectfilter',
-      package_dir={'django-selectfilter': '.'},
-      packages=['selectfilter', 'selectfilter.forms'],
-      package_data={'selectfilter': package_data_files},
-      classifiers=classifiers,
-      )
+	version="%s.%s.%s" % __import__('selectfilter').VERSION[:3],
+	description='improved Django many to many widgets',
+	author='Francesco Banconi, Marcel Dancak, Ivan Mincik',
+	author_email='francesco.banconi@gmail.com, marcel.dancak@gista.sk, ivan.mincik@gista.sk',
+	url='https://github.com/gista/django-selectfilter',
+	package_dir={'selectfilter': 'selectfilter'},
+	packages=packages,
+	package_data={'selectfilter': data_files},
+	classifiers=classifiers,
+)
