@@ -85,8 +85,6 @@ var SelectFilter = {
         var selector_filter = quickElement('input', filter_p_chosen, '', 'type', 'text');
         selector_filter.id = field_id + '_input_chosen';
 
-
-        quickElement('img', selector_filter, '', 'src', admin_media_prefix + (is_stacked ? 'img/admin/selector_stacked-add.gif':'img/admin/selector-add.gif'), 'alt', 'Add');
         var to_box = quickElement('select', selector_chosen, '', 'id', field_id + '_to', 'multiple', 'multiple', 'size', from_box.size, 'name', from_box.getAttribute('name'));
         to_box.className = 'filtered';
         var clear_all = quickElement('a', selector_chosen, gettext('Clear all'), 'href', 'javascript: (function() { SelectBox.move_all("' + field_id + '_to", "' + field_id + '_from");})()');
