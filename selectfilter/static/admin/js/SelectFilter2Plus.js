@@ -14,6 +14,18 @@ function findForm(node) {
     return node;
 }
 
+SelectBox['redisplay'] = function(id) {
+    // Repopulate HTML select box from cache
+    var box = document.getElementById(id);
+    box.options.length = 0; // clear all options
+    for (var i = 0, j = SelectBox.cache[id].length; i < j; i++) {
+        var node = SelectBox.cache[id][i];
+        var option = new Option(node.text, node.value, false, false);
+        option.hidden = !node.displayed;
+        box.options[box.options.length] = option;
+    }
+};
+
 var SelectFilter = {
     init: function(field_id, field_name, is_stacked, admin_media_prefix) {
         if (field_id.match(/__prefix__/)){
