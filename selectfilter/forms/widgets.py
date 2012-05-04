@@ -101,10 +101,14 @@ class FilteredSelectMultiple(forms.SelectMultiple):
 		choices = list(self.choices)
 		# convert to unicode for safe comparisong during a ValidationError
 		choices_keys = [unicode(i[0]) for i in choices]
+		objects_to_fetch = []
 		for i in value:
 			if not unicode(i) in choices_keys:
-				obj = utils.getObject(self.model, {"pk": i}, self.select_related)
-				choices.append((i, unicode(obj)))
+				objects_to_fetch.append(i)
+		if objects_to_fetch:
+			objects = utils.getObjects(self.model, {"pk__in": objects_to_fetch}, self.select_related)
+			for obj in objects:
+				choices.append((obj.pk, unicode(obj)))
 		choices.sort(key=operator.itemgetter(1))
 		return choices
 
