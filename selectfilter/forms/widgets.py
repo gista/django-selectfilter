@@ -112,3 +112,9 @@ class FilteredSelectMultiple(forms.SelectMultiple):
 		choices.sort(key=operator.itemgetter(1))
 		return choices
 
+	class Media:
+		js = (settings.ADMIN_MEDIA_PREFIX + "js/core.js",
+			  settings.ADMIN_MEDIA_PREFIX + "js/SelectBox.js",
+			  settings.ADMIN_MEDIA_PREFIX + "js/SelectFilter2Plus.js",
+			  settings.ADMIN_MEDIA_PREFIX + 'js/selectfilter.js')
+
